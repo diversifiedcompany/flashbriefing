@@ -2,7 +2,7 @@ name: Daily Hot Josh Feed Update
 
 on:
   schedule:
-    - cron: '0 11 * * *' # Runs every day at 6:00 AM Central Time (11:00 UTC)
+    - cron: '0 11 * * *' # 6 AM Central
   workflow_dispatch:
 
 jobs:
@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repo with token
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get latest feed from bankofentitlement.com
         run: |
