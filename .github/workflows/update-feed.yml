@@ -17,13 +17,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get latest feed from bankofentitlement.com
-        run: |
-          curl -s https://bankofentitlement.com/hotjosh_feed.php > /dev/null
-          curl -s https://bankofentitlement.com/flashbriefing.json -o flashbriefing.json
-
-         - name: Commit and push updated flashbriefing.json
+      - name: Commit and push updated flashbriefing.json
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -41,4 +35,3 @@ jobs:
             git commit -m "Automated update: $(date)"
             git push --force-with-lease origin HEAD:main
           fi
-
