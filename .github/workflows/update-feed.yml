@@ -2,7 +2,7 @@ name: Daily Hot Josh Feed Update
 
 on:
   schedule:
-    - cron: '0 11 * * *' # 6:00 AM Central Time
+    - cron: '0 11 * * *'  # 6:00 AM Central Time
   workflow_dispatch:
 
 permissions:
@@ -29,13 +29,16 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin main
-          git checkout -b update-branch origin/main
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
 
-          if git diff --quiet flashbriefing.json; then
+          git fetch origin main
+          git checkout main
+
+          git add flashbriefing.json
+
+          if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git add flashbriefing.json
             git commit -m "Automated update: $(date)"
-            git push --force-with-lease origin update-branch:main
+            git push origin main || true
           fi
