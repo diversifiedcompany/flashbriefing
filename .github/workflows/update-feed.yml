@@ -2,7 +2,7 @@ name: Daily Hot Josh Feed Update
 
 on:
   schedule:
-    - cron: '0 11 * * *' # Runs every day at 6:00 AM Central / 11:00 UTC
+    - cron: '0 11 * * *' # 6:00 AM Central Time
   workflow_dispatch:
 
 permissions:
@@ -13,25 +13,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo with token
+      - name: Checkout repo
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-- name: Commit and push updated flashbriefing.json
+
+      - name: Get latest feed from bankofentitlement.com
+        run: |
+          curl -s https://bankofentitlement.com/hotjosh_feed.php > /dev/null
+          curl -s https://bankofentitlement.com/flashbriefing.json -o flashbriefing.json
+
+      - name: Commit and push updated flashbriefing.json
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
-          
-          git fetch origin main
-          git reset --soft origin/main
-
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git add flashbriefing.json
-            git commit -m "Automated update: $(date)"
-            git push --force-with-lease origin HEAD:main
-          fi
+          git remote set-url
