@@ -23,21 +23,22 @@ jobs:
           curl -s https://bankofentitlement.com/hotjosh_feed.php > /dev/null
           curl -s https://bankofentitlement.com/flashbriefing.json -o flashbriefing.json
 
-            - name: Commit and push updated flashbriefing.json
+         - name: Commit and push updated flashbriefing.json
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
-
-          git add flashbriefing.json
+          
+          git fetch origin main
+          git reset --soft origin/main
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
+            git add flashbriefing.json
             git commit -m "Automated update: $(date)"
-            git pull --rebase
-            git push origin HEAD
+            git push --force-with-lease origin HEAD:main
           fi
 
