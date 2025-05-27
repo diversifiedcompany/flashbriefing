@@ -30,15 +30,17 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
-
+          
           git fetch origin main
-          git checkout main
-
+          git checkout main || git checkout -b main
+          
           git add flashbriefing.json
-
+          
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
             git commit -m "Automated update: $(date)"
-            git push origin main || true
+            git push origin main || echo "Push failed, but ignoring to prevent exit code."
           fi
+
+          exit 0
